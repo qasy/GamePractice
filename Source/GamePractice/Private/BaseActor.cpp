@@ -13,6 +13,7 @@ ABaseActor::ABaseActor()
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(FName("Static Mesh Component"));
 	SetRootComponent(StaticMeshComponent);
 	DeltaPosition = FVector(0.0f, 0.0f, 0.0f);
+	BiasFrequencies = FVector(0.0f, 0.0f, 0.0f);
 }
 
 // Called when the game starts or when spawned
@@ -39,13 +40,15 @@ void ABaseActor::Move()
 
 	float Time = World->GetTimeSeconds();
 	FVector Location = GetActorLocation();
-	
-	Location += DeltaPosition;
-	UE_LOG(LogTemp, Error, TEXT("%s"), *Location.ToString());
 
-	//AngleRotation *= Time;
-//	Rotator.Add(AngleRotation.Pitch, AngleRotation.Yaw, AngleRotation.Roll);
-//	SetActorLocation(Location);
+	// Want to set harmonical movement
+	// @todo: Need add InitialPosition
+	//Location.X += DeltaPosition.X * FMath::Sin(BiasFrequencies.X * Time);
+	//Location.Y += DeltaPosition.Y * FMath::Sin(BiasFrequencies.Y * Time);
+	//Location.Z += DeltaPosition.Z * FMath::Sin(BiasFrequencies.Z * Time);	
+	//
+	
 	SetActorLocation(Location);
+	UE_LOG(LogTemp, Error, TEXT("%s"), *Location.ToString());
 }
 

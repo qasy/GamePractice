@@ -25,6 +25,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	FVector DeltaPosition;
 
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	FVector BiasFrequencies;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
