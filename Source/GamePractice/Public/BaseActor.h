@@ -22,8 +22,8 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* StaticMeshComponent;
 
-	UPROPERTY(VisibleAnywhere, Category = "Movement")
-	FRotator AngleRotation;
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	FVector DeltaPosition;
 
 public:	
 	// Called every frame

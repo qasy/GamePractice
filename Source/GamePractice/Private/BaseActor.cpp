@@ -2,6 +2,7 @@
 
 
 #include "BaseActor.h"
+#include  "Engine/Engine.h"
 
 // Sets default values
 ABaseActor::ABaseActor()
@@ -11,7 +12,7 @@ ABaseActor::ABaseActor()
 
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(FName("Static Mesh Component"));
 	SetRootComponent(StaticMeshComponent);
-
+	DeltaPosition = FVector(0.0f, 0.0f, 0.0f);
 }
 
 // Called when the game starts or when spawned
@@ -25,24 +26,26 @@ void ABaseActor::BeginPlay()
 void ABaseActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
-	UWorld* World = GetWorld();
-	if(!World)
-	{
-		return;
-	}
-
-
-
+	Move();
 }
 
 void ABaseActor::Move()
 {
-	float Time = World->GetTimeSeconds();
-	FRotator Rotator = GetActorRotation();
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
 
-	AngleRotation *= Time;
-	Rotator.Add(AngleRotation.Pitch, AngleRotation.Yaw, AngleRotation.Roll);
-	SetActorRotation(Rotator);
+	float Time = World->GetTimeSeconds();
+	FVector Location = GetActorLocation();
+	
+	Location += DeltaPosition;
+	UE_LOG(LogTemp, Error, TEXT("%s"), *Location.ToString());
+
+	//AngleRotation *= Time;
+//	Rotator.Add(AngleRotation.Pitch, AngleRotation.Yaw, AngleRotation.Roll);
+//	SetActorLocation(Location);
+	SetActorLocation(Location);
 }
 
