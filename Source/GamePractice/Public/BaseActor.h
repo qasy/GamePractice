@@ -37,5 +37,5 @@ public:
 
 private:
 	void Move();
-
+	void ChangeColor();
 };

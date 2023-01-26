@@ -3,6 +3,7 @@
 
 #include "BaseActor.h"
 #include  "Engine/Engine.h"
+#include  "Materials/MaterialInstanceDynamic.h"
 
 // Sets default values
 ABaseActor::ABaseActor()
@@ -12,6 +13,7 @@ ABaseActor::ABaseActor()
 
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(FName("Static Mesh Component"));
 	SetRootComponent(StaticMeshComponent);
+	
 
 }
 
@@ -28,6 +30,7 @@ void ABaseActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	Move();
+	ChangeColor();
 }
 
 void ABaseActor::Move()
@@ -42,10 +45,24 @@ void ABaseActor::Move()
 	FVector CurrentLocation = GetActorLocation();
 
 	// Want to set harmonical movement
-	// @todo: Need add InitialPosition
 	CurrentLocation = InitialLocation + DeltaPosition * FMath::Sin(Frequency * Time);
 	
 	SetActorLocation(CurrentLocation);
-	UE_LOG(LogTemp, Error, TEXT("%s"), *CurrentLocation.ToString());
+	// UE_LOG(LogTemp, Error, TEXT("%s"), *CurrentLocation.ToString());
 }
 
+void ABaseActor::ChangeColor()
+{
+	if (StaticMeshComponent)
+	{
+		UMaterialInstanceDynamic* DynamicMaterial = StaticMeshComponent->CreateAndSetMaterialInstanceDynamic(0);
+		if(DynamicMaterial)
+		{
+			// @todo: not working color change
+			FLinearColor Color = FLinearColor::MakeRandomColor();
+			DynamicMaterial->SetVectorParameterValue("Color", Color);
+			UE_LOG(LogTemp, Error, TEXT("%s"), *Color.ToString());
+		}		
+	}
+
+}
