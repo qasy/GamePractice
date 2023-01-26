@@ -22,11 +22,14 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* StaticMeshComponent;
 
+	UPROPERTY(VisibleAnywhere, Category = "Movement")
+	FVector InitialLocation;
+	
 	UPROPERTY(EditAnywhere, Category = "Movement")
-	FVector DeltaPosition;
+	FVector DeltaPosition = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
-	FVector BiasFrequencies;
+	float Frequency = 10.0f;
 
 public:	
 	// Called every frame
