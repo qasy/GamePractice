@@ -11,8 +11,8 @@ ABaseActor::ABaseActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(FName("Static Mesh Component"));
-	SetRootComponent(StaticMeshComponent);
+	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("Static Mesh Component"));
+	SetRootComponent(StaticMesh);
 	
 
 }
@@ -23,6 +23,13 @@ void ABaseActor::BeginPlay()
 	Super::BeginPlay();
 	InitialLocation = GetActorLocation();
 	
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	ColorTimeStart = World->GetTimeSeconds();	
 }
 
 // Called every frame
@@ -30,39 +37,46 @@ void ABaseActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	Move();
-	ChangeColor();
+	SetColor(FLinearColor::MakeRandomColor());
 }
 
 void ABaseActor::Move()
 {
 	UWorld* World = GetWorld();
-	if (!World)
+	if (World)
 	{
-		return;
-	}
+		float Time = World->GetTimeSeconds();
+		FVector CurrentLocation = GetActorLocation();
 
-	float Time = World->GetTimeSeconds();
-	FVector CurrentLocation = GetActorLocation();
+		// Want to set harmonical movement
+		CurrentLocation = InitialLocation + DeltaPosition * FMath::Sin(Frequency * Time);
 
-	// Want to set harmonical movement
-	CurrentLocation = InitialLocation + DeltaPosition * FMath::Sin(Frequency * Time);
-	
-	SetActorLocation(CurrentLocation);
-	// UE_LOG(LogTemp, Error, TEXT("%s"), *CurrentLocation.ToString());
+		SetActorLocation(CurrentLocation);
+		// UE_LOG(LogTemp, Error, TEXT("%s"), *CurrentLocation.ToString());		
+	}	
 }
 
-void ABaseActor::ChangeColor()
+void ABaseActor::SetColor(const FLinearColor& Color)
 {
-	if (StaticMeshComponent)
+	UWorld* World = GetWorld();
+	if (World)
 	{
-		UMaterialInstanceDynamic* DynamicMaterial = StaticMeshComponent->CreateAndSetMaterialInstanceDynamic(0);
-		if(DynamicMaterial)
+		ColorTimeCurrent = World->GetTimeSeconds();
+		float DeltaTime = ColorTimeCurrent - ColorTimeStart;
+		if (StaticMesh && DeltaTime > ColorChangeRate)
 		{
-			// @todo: not working color change
-			FLinearColor Color = FLinearColor::MakeRandomColor();
-			DynamicMaterial->SetVectorParameterValue("Color", Color);
-			UE_LOG(LogTemp, Error, TEXT("%s"), *Color.ToString());
-		}		
+			UMaterialInstanceDynamic* DynMaterial = StaticMesh->CreateAndSetMaterialInstanceDynamic(0);
+			if (DynMaterial)
+			{
+				// @todo: not working color change
+				DynMaterial->SetVectorParameterValue("Color", Color);
+				
+				UE_LOG(LogTemp, Error, TEXT("%s delta time sec: %0.1f"), *Color.ToString(), DeltaTime);
+				ColorTimeStart = ColorTimeCurrent;
+			}
+		}
+
 	}
 
+	
 }

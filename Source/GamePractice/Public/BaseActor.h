@@ -20,7 +20,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* StaticMeshComponent;
+	UStaticMeshComponent* StaticMesh;
 
 	UPROPERTY(VisibleAnywhere, Category = "Movement")
 	FVector InitialLocation;
@@ -31,11 +31,22 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float Frequency = 10.0f;
 
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
+	//FLinearColor Color = FLinearColor::Black;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
+	float ColorChangeRate = 5.0f;
+
+	float ColorTimeStart = 0.0f;
+	float ColorTimeCurrent = 0.0f;
+	
+
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 private:
 	void Move();
-	void ChangeColor();
+	void SetColor(const FLinearColor& Color);
 };
