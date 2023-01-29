@@ -23,13 +23,6 @@ void ABaseActor::BeginPlay()
 	Super::BeginPlay();
 	InitialLocation = GetActorLocation();
 	
-	UWorld* World = GetWorld();
-	if (!World)
-	{
-		return;
-	}
-
-	ColorTimeStart = World->GetTimeSeconds();	
 }
 
 // Called every frame
