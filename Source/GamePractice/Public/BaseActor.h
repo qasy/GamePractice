@@ -46,7 +46,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void SetColor(const FLinearColor& Color);
+
 private:
 	void Move();
-	void SetColor(const FLinearColor& Color);
+	
 };

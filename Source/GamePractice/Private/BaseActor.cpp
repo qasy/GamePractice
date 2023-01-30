@@ -13,8 +13,6 @@ ABaseActor::ABaseActor()
 
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("Static Mesh Component"));
 	SetRootComponent(StaticMesh);
-	
-
 }
 
 // Called when the game starts or when spawned
@@ -22,7 +20,7 @@ void ABaseActor::BeginPlay()
 {
 	Super::BeginPlay();
 	InitialLocation = GetActorLocation();
-	
+	SetColor(FLinearColor::MakeRandomColor());
 }
 
 // Called every frame
@@ -56,8 +54,9 @@ void ABaseActor::SetColor(const FLinearColor& Color)
 	{
 		ColorTimeCurrent = World->GetTimeSeconds();
 		float DeltaTime = ColorTimeCurrent - ColorTimeStart;
-		if (StaticMesh && DeltaTime > ColorChangeRate)
+		if (StaticMesh && (DeltaTime > ColorChangeRate || FMath::IsNearlyZero(DeltaTime)) )
 		{
+			// UE_LOG(LogTemp, Warning, TEXT("%d"), FMath::IsNearlyZero(DeltaTime));
 			UMaterialInstanceDynamic* DynMaterial = StaticMesh->CreateAndSetMaterialInstanceDynamic(0);
 			if (DynMaterial)
 			{

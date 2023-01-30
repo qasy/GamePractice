@@ -29,9 +29,33 @@ void AHubBaseActor::SpawnChild()
 	UWorld* World = GetWorld();
 	if (World)
 	{
-		FTransform Transform = GetActorTransform();
-		ABaseActor* SpawnedActor = World->SpawnActor<ABaseActor>(SpawnedClass, Transform);
+		for (int32 i = 0; i < ActorMaxCounter; ++i)
+		{
+			FVector Location = GetActorLocation();
+			Location.X += i * 200.f;
+			ABaseActor* SpawnedActor = World->SpawnActor<ABaseActor>(SpawnedClass, FTransform(FRotator::ZeroRotator, Location));
+		}
 	}
+}
 
+void AHubBaseActor::SpawnChildDeffered()
+{
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		for (int32 i = 0; i < ActorMaxCounter; ++i)
+		{
+			FVector Location = GetActorLocation();
+			Location.X += i * 200.f;
+			Location.Z += 200.0f;
+			ABaseActor* SpawnedActor = World->SpawnActorDeferred<ABaseActor>(SpawnedClass, FTransform(FRotator::ZeroRotator, Location));
+			if (SpawnedActor)
+			{
+				SpawnedActor->SetColor(FLinearColor::MakeRandomColor());
+				SpawnedActor->FinishSpawning(FTransform(FRotator::ZeroRotator, Location));
+
+			}
+		}
+	}
 }
 

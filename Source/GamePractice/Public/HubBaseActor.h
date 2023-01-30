@@ -23,11 +23,16 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ABaseActor> SpawnedClass;
 
+	UPROPERTY(EditAnywhere)
+	int32 ActorMaxCounter = 10;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 private: 
+
 	void SpawnChild();
+	void SpawnChildDeffered();
 
 };
