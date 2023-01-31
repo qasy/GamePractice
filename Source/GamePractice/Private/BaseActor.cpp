@@ -5,6 +5,8 @@
 #include  "Engine/Engine.h"
 #include  "Materials/MaterialInstanceDynamic.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogBaseActor, All, All)
+
 // Sets default values
 ABaseActor::ABaseActor()
 {
@@ -19,7 +21,7 @@ ABaseActor::ABaseActor()
 void ABaseActor::BeginPlay()
 {
 	Super::BeginPlay();
-	InitialLocation = GetActorLocation();
+	MovementData.InitialLocation = GetActorLocation();
 	SetColor(FLinearColor::MakeRandomColor());
 }
 
@@ -37,14 +39,19 @@ void ABaseActor::Move()
 	if (World)
 	{
 		float Time = World->GetTimeSeconds();
-		FVector CurrentLocation = GetActorLocation();
 
 		// Want to set harmonical movement
-		CurrentLocation = InitialLocation + DeltaPosition * FMath::Sin(Frequency * Time);
+		if (MovementData.MovementType == EMovementType::Sin)
+		{
+			FVector CurrentLocation = GetActorLocation();
+			CurrentLocation = MovementData.InitialLocation + MovementData.Amplitude * FMath::Sin(MovementData.Frequency * Time);
+			SetActorLocation(CurrentLocation);
+		}
 
-		SetActorLocation(CurrentLocation);
+	
 		// UE_LOG(LogTemp, Error, TEXT("%s"), *CurrentLocation.ToString());		
 	}	
+	//UE_LOG(LogBaseActor, Warning, TEXT("Move(): Name: %s, %0.1f"), *GetName(), MovementData.Frequency);
 }
 
 void ABaseActor::SetColor(const FLinearColor& Color)
@@ -71,4 +78,9 @@ void ABaseActor::SetColor(const FLinearColor& Color)
 	}
 
 	
+}
+
+void ABaseActor::SetMovementData(const FMovementData& MData)
+{
+	MovementData = MData;
 }

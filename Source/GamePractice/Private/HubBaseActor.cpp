@@ -14,6 +14,7 @@ void AHubBaseActor::BeginPlay()
 {
 	Super::BeginPlay();
 	SpawnChild();
+	SpawnChildDeffered();
 	
 }
 
@@ -49,8 +50,12 @@ void AHubBaseActor::SpawnChildDeffered()
 			Location.X += i * 200.f;
 			Location.Z += 200.0f;
 			ABaseActor* SpawnedActor = World->SpawnActorDeferred<ABaseActor>(SpawnedClass, FTransform(FRotator::ZeroRotator, Location));
+			
 			if (SpawnedActor)
 			{
+				FMovementData TmpMoveData;
+				TmpMoveData.MovementType = FMath::RandBool() ? EMovementType::Static : EMovementType::Sin;
+				SpawnedActor->SetMovementData(TmpMoveData);
 				SpawnedActor->SetColor(FLinearColor::MakeRandomColor());
 				SpawnedActor->FinishSpawning(FTransform(FRotator::ZeroRotator, Location));
 

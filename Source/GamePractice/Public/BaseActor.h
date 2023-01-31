@@ -6,6 +6,32 @@
 #include "GameFramework/Actor.h"
 #include "BaseActor.generated.h"
 
+UENUM(BlueprintType)
+enum class EMovementType : uint8
+{
+	Static,
+	Sin
+};
+
+USTRUCT(BlueprintType)
+struct FMovementData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleAnywhere, Category = "Movement")
+	FVector InitialLocation = FVector::ZeroVector;
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float Amplitude = 10.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float Frequency = 10.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	EMovementType MovementType = EMovementType::Sin;
+};
+
+
 UCLASS()
 class GAMEPRACTICE_API ABaseActor : public AActor
 {
@@ -22,14 +48,8 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* StaticMesh;
 
-	UPROPERTY(VisibleAnywhere, Category = "Movement")
-	FVector InitialLocation;
-	
 	UPROPERTY(EditAnywhere, Category = "Movement")
-	FVector DeltaPosition = FVector::ZeroVector;
-
-	UPROPERTY(EditAnywhere, Category = "Movement")
-	float Frequency = 10.0f;
+	FMovementData MovementData;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
 	//FLinearColor Color = FLinearColor::Black;
@@ -47,6 +67,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void SetColor(const FLinearColor& Color);
+	void SetMovementData(const FMovementData& MData);
 
 private:
 	void Move();
