@@ -21,8 +21,8 @@ ABaseActor::ABaseActor()
 void ABaseActor::BeginPlay()
 {
 	Super::BeginPlay();
-	MovementData.InitialLocation = GetActorLocation();
-	SetColor(FLinearColor::MakeRandomColor());
+	MovementData.InitialTransform = GetActorTransform();
+	//SetColor(FLinearColor::MakeRandomColor());
 }
 
 // Called every frame
@@ -43,9 +43,15 @@ void ABaseActor::Move()
 		// Want to set harmonical movement
 		if (MovementData.MovementType == EMovementType::Sin)
 		{
-			FVector CurrentLocation = GetActorLocation();
-			CurrentLocation = MovementData.InitialLocation + MovementData.Amplitude * FMath::Sin(MovementData.Frequency * Time);
+			FVector InitialLocation = MovementData.InitialTransform.GetLocation();
+			FVector CurrentLocation = InitialLocation + MovementData.Amplitude * FMath::Sin(MovementData.Frequency * Time);
 			SetActorLocation(CurrentLocation);
+		}
+		else if (MovementData.MovementType == EMovementType::Rotate)
+		{
+			FRotator InitialRotation = MovementData.InitialTransform.Rotator();
+			FRotator CurrentRotation = InitialRotation + FRotator(0.0f, MovementData.Amplitude*FMath::Sin(MovementData.Frequency * Time), 0.0f);
+			SetActorRotation(CurrentRotation);
 		}
 
 	

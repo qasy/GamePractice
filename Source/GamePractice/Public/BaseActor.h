@@ -10,7 +10,8 @@ UENUM(BlueprintType)
 enum class EMovementType : uint8
 {
 	Static,
-	Sin
+	Sin,
+	Rotate
 };
 
 USTRUCT(BlueprintType)
@@ -19,7 +20,7 @@ struct FMovementData
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(VisibleAnywhere, Category = "Movement")
-	FVector InitialLocation = FVector::ZeroVector;
+	FTransform InitialTransform = FTransform(FRotator::ZeroRotator, FVector::ZeroVector);
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float Amplitude = 10.0f;
@@ -28,7 +29,7 @@ struct FMovementData
 	float Frequency = 10.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
-	EMovementType MovementType = EMovementType::Sin;
+	EMovementType MovementType = EMovementType::Rotate;
 };
 
 

@@ -55,6 +55,7 @@ void AHubBaseActor::SpawnChildDeffered()
 			{
 				FMovementData TmpMoveData;
 				TmpMoveData.MovementType = FMath::RandBool() ? EMovementType::Static : EMovementType::Sin;
+				TmpMoveData.MovementType = (TmpMoveData.MovementType == EMovementType::Static) ? EMovementType::Static : EMovementType::Rotate;
 				SpawnedActor->SetMovementData(TmpMoveData);
 				SpawnedActor->SetColor(FLinearColor::MakeRandomColor());
 				SpawnedActor->FinishSpawning(FTransform(FRotator::ZeroRotator, Location));
