@@ -2,8 +2,9 @@
 
 
 #include "BaseActor.h"
-#include  "Engine/Engine.h"
-#include  "Materials/MaterialInstanceDynamic.h"
+#include "Engine/Engine.h"
+#include "TimerManager.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseActor, All, All)
 
@@ -21,8 +22,8 @@ ABaseActor::ABaseActor()
 void ABaseActor::BeginPlay()
 {
 	Super::BeginPlay();
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &ABaseActor::OnTimerFired, TimerRate, true);
 	MovementData.InitialTransform = GetActorTransform();
-	//SetColor(FLinearColor::MakeRandomColor());
 }
 
 // Called every frame
@@ -30,7 +31,6 @@ void ABaseActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	Move();
-	SetColor(FLinearColor::MakeRandomColor());
 }
 
 void ABaseActor::Move()
@@ -55,7 +55,7 @@ void ABaseActor::Move()
 		}
 
 	
-		// UE_LOG(LogTemp, Error, TEXT("%s"), *CurrentLocation.ToString());		
+		// UE_LOG(LogBaseActor, Error, TEXT("%s"), *CurrentLocation.ToString());		
 	}	
 	//UE_LOG(LogBaseActor, Warning, TEXT("Move(): Name: %s, %0.1f"), *GetName(), MovementData.Frequency);
 }
@@ -65,28 +65,29 @@ void ABaseActor::SetColor(const FLinearColor& Color)
 	UWorld* World = GetWorld();
 	if (World)
 	{
-		ColorTimeCurrent = World->GetTimeSeconds();
-		float DeltaTime = ColorTimeCurrent - ColorTimeStart;
-		if (StaticMesh && (DeltaTime > ColorChangeRate || FMath::IsNearlyZero(DeltaTime)) )
+		UMaterialInstanceDynamic* DynMaterial = StaticMesh->CreateAndSetMaterialInstanceDynamic(0);
+		if (DynMaterial)
 		{
-			// UE_LOG(LogTemp, Warning, TEXT("%d"), FMath::IsNearlyZero(DeltaTime));
-			UMaterialInstanceDynamic* DynMaterial = StaticMesh->CreateAndSetMaterialInstanceDynamic(0);
-			if (DynMaterial)
-			{
-				// @todo: not working color change
-				DynMaterial->SetVectorParameterValue("Color", Color);
-				
-				UE_LOG(LogTemp, Error, TEXT("%s delta time sec: %0.1f"), *Color.ToString(), DeltaTime);
-				ColorTimeStart = ColorTimeCurrent;
-			}
+			// Set value to Color parameter, which one we named from blueprint
+			DynMaterial->SetVectorParameterValue("Color", Color);
+			UE_LOG(LogBaseActor, Error, TEXT("New color: %s "), *Color.ToString());
 		}
-
-	}
-
-	
+	}	
 }
 
 void ABaseActor::SetMovementData(const FMovementData& MData)
 {
 	MovementData = MData;
+}
+
+void ABaseActor::OnTimerFired()
+{	
+	// Function called by the timer
+	if (++TimerCounter >= MaxTimerCounter)
+	{
+		TimerCounter = 0;
+		SetColor(FLinearColor::MakeRandomColor());
+		
+	}
+	UE_LOG(LogBaseActor, Warning, TEXT("Counter value: %d"), TimerCounter);
 }

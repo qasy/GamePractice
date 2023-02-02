@@ -42,6 +42,12 @@ public:
 	// Sets default values for this actor's properties
 	ABaseActor();
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	void SetColor(const FLinearColor& Color);
+	void SetMovementData(const FMovementData& MData);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -60,17 +66,17 @@ protected:
 
 	float ColorTimeStart = 0.0f;
 	float ColorTimeCurrent = 0.0f;
-	
-
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	void SetColor(const FLinearColor& Color);
-	void SetMovementData(const FMovementData& MData);
 
 private:
+	
+	FTimerHandle TimerHandle; // Timer descriptor
+	float TimerRate = 1.0f;
+	int32 MaxTimerCounter = 5;
+	int32 TimerCounter = 0;
+
 	void Move();
+
+	// Function called by the timer
+	void OnTimerFired();
 	
 };
