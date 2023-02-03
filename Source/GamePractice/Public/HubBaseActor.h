@@ -16,6 +16,9 @@ public:
 	// Sets default values for this actor's properties
 	AHubBaseActor();
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -24,15 +27,19 @@ protected:
 	TSubclassOf<ABaseActor> SpawnedClass;
 
 	UPROPERTY(EditAnywhere)
-	int32 ActorMaxCounter = 10;
+	int32 MaxSpawnedActorCounter = 10;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 private: 
 
+	FTimerHandle SpawnTimerHandle;
+	float SpawnTimerRate = 1.0f;
+	int32 SpawnedActorCounter = 0;
+
+
 	void SpawnChild();
 	void SpawnChildDeffered();
+	void SpawnChildOnTimer();
+
 
 };

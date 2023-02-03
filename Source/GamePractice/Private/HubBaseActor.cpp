@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "HubBaseActor.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogHubBaseActor, All, All)
+
 // Sets default values
 AHubBaseActor::AHubBaseActor()
 {
@@ -13,8 +15,11 @@ AHubBaseActor::AHubBaseActor()
 void AHubBaseActor::BeginPlay()
 {
 	Super::BeginPlay();
-	SpawnChild();
-	SpawnChildDeffered();
+
+	// SpawnChild();
+	// SpawnChildDeffered();
+	// SpawnChildOnTimer();
+	GetWorldTimerManager().SetTimer(SpawnTimerHandle, this, &AHubBaseActor::SpawnChildOnTimer, SpawnTimerRate, true);
 	
 }
 
@@ -30,7 +35,7 @@ void AHubBaseActor::SpawnChild()
 	UWorld* World = GetWorld();
 	if (World)
 	{
-		for (int32 i = 0; i < ActorMaxCounter; ++i)
+		for (int32 i = 0; i < MaxSpawnedActorCounter; ++i)
 		{
 			FVector Location = GetActorLocation();
 			Location.X += i * 200.f;
@@ -44,7 +49,7 @@ void AHubBaseActor::SpawnChildDeffered()
 	UWorld* World = GetWorld();
 	if (World)
 	{
-		for (int32 i = 0; i < ActorMaxCounter; ++i)
+		for (int32 i = 0; i < MaxSpawnedActorCounter; ++i)
 		{
 			FVector Location = GetActorLocation();
 			Location.X += i * 200.f;
@@ -65,3 +70,27 @@ void AHubBaseActor::SpawnChildDeffered()
 	}
 }
 
+void AHubBaseActor::SpawnChildOnTimer()
+{
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		if (SpawnedActorCounter++ < MaxSpawnedActorCounter)
+		{
+			FTransform HubTransform = GetActorTransform();
+			FVector HubLocation = HubTransform.GetLocation();
+			FVector SpawnLocation = HubLocation + FVector(200.0f * SpawnedActorCounter, 0.0f, 0.0f);
+			FTransform SpawnTransform = FTransform(FRotator::ZeroRotator, SpawnLocation);
+			ABaseActor* SpawnedActor = World->SpawnActorDeferred<ABaseActor>(SpawnedClass, SpawnTransform);
+			if (SpawnedActor)
+			{
+				SpawnedActor->FinishSpawning(SpawnTransform);
+			}
+		}
+		else
+		{
+			GetWorldTimerManager().ClearTimer(SpawnTimerHandle);
+			UE_LOG(LogHubBaseActor, Warning, TEXT("%s finished spawning"), *GetName());
+		}
+	}
+}
