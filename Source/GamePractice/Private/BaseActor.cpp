@@ -83,11 +83,15 @@ void ABaseActor::SetMovementData(const FMovementData& MData)
 void ABaseActor::OnTimerFired()
 {	
 	// Function called by the timer
-	if (++TimerCounter >= MaxTimerCounter)
+	if (TimerCounter++ < MaxTimerCounter)
 	{
-		TimerCounter = 0;
-		SetColor(FLinearColor::MakeRandomColor());
-		
+		SetColor(FLinearColor::MakeRandomColor());		
+		UE_LOG(LogBaseActor, Warning, TEXT("%s timer counter %d/%d."), *GetName(), TimerCounter, MaxTimerCounter);
 	}
-	UE_LOG(LogBaseActor, Warning, TEXT("Counter value: %d"), TimerCounter);
+	else
+	{
+		GetWorldTimerManager().ClearTimer(TimerHandle);
+		UE_LOG(LogBaseActor, Warning, TEXT("%s clear timer."), *GetName());
+	}
+	
 }

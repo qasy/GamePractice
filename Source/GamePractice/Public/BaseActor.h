@@ -71,7 +71,7 @@ private:
 	
 	FTimerHandle TimerHandle; // Timer descriptor
 	float TimerRate = 1.0f;
-	int32 MaxTimerCounter = 5;
+	int32 MaxTimerCounter = 10;
 	int32 TimerCounter = 0;
 
 	void Move();
