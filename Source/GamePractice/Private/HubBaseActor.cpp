@@ -18,7 +18,6 @@ void AHubBaseActor::BeginPlay()
 
 	// SpawnChild();
 	// SpawnChildDeffered();
-	// SpawnChildOnTimer();
 	GetWorldTimerManager().SetTimer(SpawnTimerHandle, this, &AHubBaseActor::SpawnChildOnTimer, SpawnTimerRate, true);
 	
 }
@@ -84,13 +83,34 @@ void AHubBaseActor::SpawnChildOnTimer()
 			ABaseActor* SpawnedActor = World->SpawnActorDeferred<ABaseActor>(SpawnedClass, SpawnTransform);
 			if (SpawnedActor)
 			{
+				SpawnedActor->OnLifeTimerFinished.AddUObject(this, &AHubBaseActor::SpawnReplacement);
+				SpawnedActor->SetColor(FLinearColor::Red);
 				SpawnedActor->FinishSpawning(SpawnTransform);
 			}
 		}
 		else
 		{
 			GetWorldTimerManager().ClearTimer(SpawnTimerHandle);
-			UE_LOG(LogHubBaseActor, Warning, TEXT("%s finished spawning"), *GetName());
+			UE_LOG(LogHubBaseActor, Verbose, TEXT("%s finished spawning"), *GetName());
 		}
 	}
 }
+
+void AHubBaseActor::SpawnReplacement(AActor* Actor)
+{
+	UWorld* World = GetWorld();
+	if (World && Actor)
+	{
+		FTransform OldTransform = Actor->GetTransform();
+		
+		ABaseActor* SpawnedActor = World->SpawnActorDeferred<ABaseActor>(SpawnedClass, OldTransform);
+		if (SpawnedActor)
+		{
+			SpawnedActor->SetMaxLifeCounter(10);
+			SpawnedActor->SetColor(FLinearColor::Blue);
+			SpawnedActor->FinishSpawning(OldTransform);
+		}
+	}
+
+}
+

@@ -40,6 +40,6 @@ private:
 	void SpawnChild();
 	void SpawnChildDeffered();
 	void SpawnChildOnTimer();
-
+	void SpawnReplacement(AActor* Actor);
 
 };

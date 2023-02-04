@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "BaseActor.generated.h"
 
+// Call, when timer has stopped
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnLifeTimerFinished, AActor*);
+
 UENUM(BlueprintType)
 enum class EMovementType : uint8
 {
@@ -29,7 +32,7 @@ struct FMovementData
 	float Frequency = 10.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
-	EMovementType MovementType = EMovementType::Rotate;
+	EMovementType MovementType = EMovementType::Static;
 };
 
 
@@ -47,6 +50,9 @@ public:
 
 	void SetColor(const FLinearColor& Color);
 	void SetMovementData(const FMovementData& MData);
+	void SetMaxLifeCounter(int32 newValue);
+
+	FOnLifeTimerFinished OnLifeTimerFinished;
 
 protected:
 	// Called when the game starts or when spawned
@@ -60,23 +66,23 @@ protected:
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
 	//FLinearColor Color = FLinearColor::Black;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
-	float ColorChangeRate = 5.0f;
 
-	float ColorTimeStart = 0.0f;
-	float ColorTimeCurrent = 0.0f;
 
 private:
-	
-	FTimerHandle TimerHandle; // Timer descriptor
-	float TimerRate = 1.0f;
-	int32 MaxTimerCounter = 10;
-	int32 TimerCounter = 0;
+	FTimerHandle LifeTimerHandle;
+	float LifeTimerRate = 1.0f;
+	int32 LifeTimerCounter = 0;
+	int32 MaxLifeTimerCounter = 5;
+
+	FTimerHandle ColorTimerHandle; // Timer descriptor
+	float ColorTimerRate = 1.0f;
+	int32 MaxColorTimerCounter = 10;
+	int32 ColorTimerCounter = 0;
 
 	void Move();
 
 	// Function called by the timer
-	void OnTimerFired();
+	void OnColorTimerFired();
+	void OnLifeTimerFired();
 	
 };

@@ -22,7 +22,8 @@ ABaseActor::ABaseActor()
 void ABaseActor::BeginPlay()
 {
 	Super::BeginPlay();
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &ABaseActor::OnTimerFired, TimerRate, true);
+	// GetWorldTimerManager().SetTimer(ColorTimerHandle, this, &ABaseActor::OnColorTimerFired, ColorTimerRate, true);
+	GetWorldTimerManager().SetTimer(LifeTimerHandle, this, &ABaseActor::OnLifeTimerFired, LifeTimerRate, true);
 	MovementData.InitialTransform = GetActorTransform();
 }
 
@@ -80,18 +81,41 @@ void ABaseActor::SetMovementData(const FMovementData& MData)
 	MovementData = MData;
 }
 
-void ABaseActor::OnTimerFired()
+void ABaseActor::OnColorTimerFired()
 {	
 	// Function called by the timer
-	if (TimerCounter++ < MaxTimerCounter)
+	if (ColorTimerCounter++ < MaxColorTimerCounter)
 	{
 		SetColor(FLinearColor::MakeRandomColor());		
-		UE_LOG(LogBaseActor, Warning, TEXT("%s timer counter %d/%d."), *GetName(), TimerCounter, MaxTimerCounter);
+		UE_LOG(LogBaseActor, Warning, TEXT("%s timer counter %d/%d."), *GetName(), ColorTimerCounter, MaxColorTimerCounter);
 	}
 	else
 	{
-		GetWorldTimerManager().ClearTimer(TimerHandle);
+		GetWorldTimerManager().ClearTimer(ColorTimerHandle);
 		UE_LOG(LogBaseActor, Warning, TEXT("%s clear timer."), *GetName());
 	}
 	
+}
+
+void ABaseActor::OnLifeTimerFired()
+{
+	if (LifeTimerCounter++ < MaxLifeTimerCounter)
+	{
+		UE_LOG(LogBaseActor, Warning, TEXT("%s have a %d seconds before destroy"), *GetName(), LifeTimerCounter);	
+	}
+	else
+	{
+		GetWorldTimerManager().ClearTimer(LifeTimerHandle);
+		if (OnLifeTimerFinished.IsBound())
+		{
+			OnLifeTimerFinished.Broadcast(this);
+		}
+		Destroy();
+		UE_LOG(LogBaseActor, Error, TEXT("%s was destroyed!"), *GetName());
+	}
+}
+
+void ABaseActor::SetMaxLifeCounter(int32 newValue)
+{
+	MaxLifeTimerCounter = (newValue > 0) ? newValue : MaxLifeTimerCounter;
 }
