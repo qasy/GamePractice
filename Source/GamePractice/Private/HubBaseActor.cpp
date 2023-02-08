@@ -18,6 +18,7 @@ void AHubBaseActor::BeginPlay()
 
 	// SpawnChild();
 	// SpawnChildDeffered();
+	SpawnFromArray();
 	GetWorldTimerManager().SetTimer(SpawnTimerHandle, this, &AHubBaseActor::SpawnChildOnTimer, SpawnTimerRate, true);
 	
 }
@@ -111,6 +112,26 @@ void AHubBaseActor::SpawnReplacement(AActor* Actor)
 			SpawnedActor->FinishSpawning(OldTransform);
 		}
 	}
+}
 
+void AHubBaseActor::SpawnFromArray()
+{
+	UWorld* World = GetWorld();
+	if(World)
+	{
+		int32 i = 0;
+		for (const FSpawnedPayloads& Payload: SpawnedPayloads)
+		{
+			FVector HubLocation = GetActorLocation();
+			FVector SpawnLocation = HubLocation + FVector(200.0f * i, 0.0f, 200.0f);
+			FTransform SpawnTransform = FTransform(FRotator::ZeroRotator, SpawnLocation);
+						
+			ABaseActor* SpawnedActor = World->SpawnActor<ABaseActor>(Payload.SpawnedClass, SpawnTransform);
+			
+			SpawnedActor->SetMovementData(Payload.MovementData);
+			SpawnedActor->SetColor(Payload.BeginColor);
+			++i;
+		}
+	}
 }
 

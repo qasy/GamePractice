@@ -76,10 +76,6 @@ void ABaseActor::SetColor(const FLinearColor& Color)
 	}	
 }
 
-void ABaseActor::SetMovementData(const FMovementData& MData)
-{
-	MovementData = MData;
-}
 
 void ABaseActor::OnColorTimerFired()
 {	
@@ -118,4 +114,9 @@ void ABaseActor::OnLifeTimerFired()
 void ABaseActor::SetMaxLifeCounter(int32 newValue)
 {
 	MaxLifeTimerCounter = (newValue > 0) ? newValue : MaxLifeTimerCounter;
+}
+
+void ABaseActor::SetMovementData(const FMovementData& Data)
+{
+	MovementData = Data;
 }

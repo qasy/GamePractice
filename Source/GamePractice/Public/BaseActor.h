@@ -48,8 +48,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void SetMovementData(const FMovementData& Data);
 	void SetColor(const FLinearColor& Color);
-	void SetMovementData(const FMovementData& MData);
 	void SetMaxLifeCounter(int32 newValue);
 
 	FOnLifeTimerFinished OnLifeTimerFinished;

@@ -7,6 +7,21 @@
 #include "BaseActor.h"
 #include "HubBaseActor.generated.h"
 
+USTRUCT(BlueprintType)
+struct FSpawnedPayloads
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ABaseActor> SpawnedClass;
+
+	UPROPERTY(EditAnywhere)
+	FLinearColor BeginColor;
+
+	UPROPERTY(EditAnywhere)
+	FMovementData MovementData;
+};
+
 UCLASS()
 class GAMEPRACTICE_API AHubBaseActor : public AActor
 {
@@ -29,6 +44,8 @@ protected:
 	UPROPERTY(EditAnywhere)
 	int32 MaxSpawnedActorCounter = 10;
 
+	UPROPERTY(EditAnywhere)
+	TArray<FSpawnedPayloads> SpawnedPayloads;
 
 private: 
 
@@ -40,6 +57,7 @@ private:
 	void SpawnChild();
 	void SpawnChildDeffered();
 	void SpawnChildOnTimer();
+	void SpawnFromArray();
 	void SpawnReplacement(AActor* Actor);
 
 };
