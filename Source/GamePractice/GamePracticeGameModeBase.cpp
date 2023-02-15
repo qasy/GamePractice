@@ -2,4 +2,10 @@
 
 
 #include "GamePracticeGameModeBase.h"
+#include "BasePawn.h"
+
+AGamePracticeGameModeBase::AGamePracticeGameModeBase()
+{
+	DefaultPawnClass = ABasePawn::StaticClass();
+}
 

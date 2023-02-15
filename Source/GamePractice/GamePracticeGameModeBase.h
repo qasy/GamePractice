@@ -14,4 +14,6 @@ class GAMEPRACTICE_API AGamePracticeGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+public:
+	AGamePracticeGameModeBase();
 };
